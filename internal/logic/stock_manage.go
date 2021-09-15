@@ -11,18 +11,19 @@ import (
 
 // Ticker 定时任务，只要服务在运行就会更新股票价格
 func Ticker() {
-	tick := time.NewTicker(10 * time.Minute)
+	tick := time.NewTicker(10 * time.Second)
 	for {
 		<-tick.C
 		if time.Now().Local().Hour() > 16 {
 			UpdateStock()
+			tick.Reset(1 * time.Hour)
 		}
 	}
 }
 
 // GetAllStocks 读取组合中所有的股票，加入需要监听价格的队列
 func GetAllStocks() []model.Stock {
-	stocks := make([]model.Stock, 0)
+	stocks := make(map[string]*model.JuheStock)
 	db := pool.Database
 	sql := "select * from stock_info order by id"
 	row, err := db.Query(sql)
@@ -30,7 +31,6 @@ func GetAllStocks() []model.Stock {
 		glog.Errorf("query sql[%s] fail: %s", sql, err)
 		return nil
 	}
-	defer row.Close()
 	for row.Next() {
 		var id int
 		var mtime time.Time
@@ -41,20 +41,42 @@ func GetAllStocks() []model.Stock {
 			continue
 		}
 		stock := &model.JuheStock{
-			ID: id,
-			Mtime: mtime,
+			ID:        id,
+			Mtime:     mtime,
 			StockCode: stockCode,
 			StockName: stockName,
-			Market: market,
+			Market:    market,
 		}
-		stocks = append(stocks, stock)
+		stocks[stock.StockCode] = stock
 	}
-	return stocks
+	row.Close()
+	stockList := make([]model.Stock, 0)
+	for code, stock := range stocks {
+		sql = "select * from stock_price where stock_id = ? order by cdate desc limit 1"
+		row, err = db.Query(sql, code)
+		if err != nil {
+			continue
+		}
+		for row.Next() {
+			var stockID, cdate, price string
+			err := row.Scan(&stockID, &cdate, &price)
+			if err != nil {
+				continue
+			}
+			stock.Price = price
+			stock.CDate = cdate
+			stockList = append(stockList, stock)
+		}
+
+		row.Close()
+	}
+
+	return stockList
 }
 
 func UpdateStock() {
-	stocks := GetRunTimeContext().stocks
-	for _, stock := range stocks {
+	stocks := GetRunTimeContext().Stocks
+	for code, stock := range stocks {
 		now := time.Now()
 		db := pool.Database
 
@@ -90,6 +112,7 @@ func UpdateStock() {
 			glog.Errorf("exec sql[%s] fail: %s\n", sql, err)
 			continue
 		}
+		stocks[code] = stock
 	}
 
 }

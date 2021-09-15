@@ -28,11 +28,14 @@ const (
 type JuheStock struct {
 	data *JuheData
 
-	ID int
-	Mtime time.Time
+	ID        int
+	Mtime     time.Time
 	StockCode string
 	StockName string
-	Market string
+	Market    string
+
+	CDate string
+	Price string
 }
 
 type JuheData struct {
@@ -97,6 +100,12 @@ func NewStock(code string, market string) (Stock, error) {
 	stock := JuheStock{
 		data: &juheRsp.Result[0].Data,
 	}
+	stock.StockCode = stock.data.Gid
+	stock.Price = stock.data.LastestPri
+	stock.StockName = stock.data.Name
+	stock.Market = market
+	now := time.Now()
+	stock.CDate = fmt.Sprintf("%d-%02d-%02d", now.Year(), now.Month(), now.Day())
 	return &stock, nil
 }
 
@@ -112,17 +121,17 @@ func getParams(code, market string) (string, error) {
 }
 
 func (s *JuheStock) GetName() string {
-	return s.data.Name
+	return s.StockName
 }
 
 func (s *JuheStock) GetCode() string {
-	return s.data.Gid
+	return s.StockCode
 }
 
 func (s *JuheStock) GetLatestPrice() string {
-	return s.data.LastestPri
+	return s.Price
 }
 
 func (s *JuheStock) GetDate() string {
-	return s.data.Date
+	return s.CDate
 }

@@ -6,7 +6,7 @@ create table stock_info (
     market varchar(16) NOT NULL
 );
 create table stock_price (
-    stock_id INTEGER NOT NULL,
+    stock_id varchar(8) NOT NULL,
     cdate date default CURRENT_DATE,
     price varchar(8) NOT NULL,
     PRIMARY KEY (stock_id, cdate)

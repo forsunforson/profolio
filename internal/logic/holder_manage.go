@@ -27,7 +27,7 @@ func GetHolder(name string, portfolioID int) (*model.Holder, error) {
 		err := rows.Scan(&id, &mtime, &ctime, &name, &percentage, &total)
 		if err != nil {
 			glog.Errorf("read row fail: %s", err)
-			return nil, err
+			continue
 		}
 		per, _ := strconv.ParseFloat(percentage, 32)
 		h := model.Holder{
@@ -41,6 +41,7 @@ func GetHolder(name string, portfolioID int) (*model.Holder, error) {
 	return nil, errors.New(name + " not found")
 }
 
+// GetAllHolders 读取组合下所有的股东
 func GetAllHolders(pID int) ([]model.Holder, error) {
 	db := pool.Database
 	sql := "select * from holder_info where h_portfolio = ? limit 100"
@@ -80,6 +81,33 @@ func NewHolder(name string, portfolioID int) error {
 	if err != nil {
 		glog.Errorf("exec sql[%s] fail: %s\n", sql, err)
 		return err
+	}
+	return nil
+}
+
+func UpdateHoldersValue(pID int) error {
+	port, err := GetPortfolioInfo(pID)
+	if err != nil {
+		return err
+	}
+	holders, err := GetAllHolders(pID)
+	if err != nil {
+		return err
+	}
+	db := pool.Database
+	for _, holder := range holders {
+		sql := "update holder_info set h_total = ? where h_portfolio = ? and h_name = ?"
+		stmt, err := db.Prepare(sql)
+		if err != nil {
+			glog.Errorf("prepare sql[%s] fail: %s", sql, err)
+			continue
+		}
+		newTotal := int(holder.Percentage * float32(port.Total))
+		_, err = stmt.Exec(newTotal, pID, holder.Name)
+		if err != nil {
+			glog.Errorf("exec sql[%s] fail: %s", sql, err)
+			continue
+		}
 	}
 	return nil
 }

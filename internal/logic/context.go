@@ -6,7 +6,7 @@ import (
 
 type RuntimeContext struct {
 	Portfolios []*model.Portfolio
-	stocks     []model.Stock
+	Stocks     map[string]model.Stock
 }
 
 var (
@@ -16,7 +16,11 @@ var (
 func InitContext() {
 	ctx := RuntimeContext{}
 	stocks := GetAllStocks()
-	ctx.stocks = stocks
+	stockMap := make(map[string]model.Stock)
+	for _, stock := range stocks {
+		stockMap[stock.GetCode()] = stock
+	}
+	ctx.Stocks = stockMap
 	runtimeContext = &ctx
 	go Ticker()
 }

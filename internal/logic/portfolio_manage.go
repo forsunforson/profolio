@@ -27,7 +27,7 @@ func GetPortfolioInfo(id int) (*model.Portfolio, error) {
 		err := rows.Scan(&id, &marketValue, &cash, &totalValue)
 		if err != nil {
 			glog.Errorf("read row fail: %s", err)
-			return nil, err
+			continue
 		}
 		p := &model.Portfolio{
 			ID:          id,

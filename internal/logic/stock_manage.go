@@ -9,13 +9,9 @@ import (
 	"github.com/golang/glog"
 )
 
-func init() {
-	go ticker()
-}
-
-func ticker() {
-	// 定时任务，只要服务在运行就会更新股票价格
-	tick := time.NewTicker(10 * time.Hour)
+// Ticker 定时任务，只要服务在运行就会更新股票价格
+func Ticker() {
+	tick := time.NewTicker(10 * time.Minute)
 	for {
 		<-tick.C
 		if time.Now().Local().Hour() > 16 {
@@ -24,12 +20,32 @@ func ticker() {
 	}
 }
 
-func GetAllStocks(stocksCode []string) []model.Stock {
+// GetAllStocks 读取组合中所有的股票，加入需要监听价格的队列
+func GetAllStocks() []model.Stock {
 	stocks := make([]model.Stock, 0)
-	for _, code := range stocksCode {
-		stock, err := model.NewStock(code, model.JuheHongkong)
+	db := pool.Database
+	sql := "select * from stock_info order by id"
+	row, err := db.Query(sql)
+	if err != nil {
+		glog.Errorf("query sql[%s] fail: %s", sql, err)
+		return nil
+	}
+	defer row.Close()
+	for row.Next() {
+		var id int
+		var mtime time.Time
+		var stockCode, stockName, market string
+		err := row.Scan(&id, &mtime, &stockCode, &stockName, &market)
 		if err != nil {
+			glog.Errorf("read row fail: %s", err)
 			continue
+		}
+		stock := &model.JuheStock{
+			ID: id,
+			Mtime: mtime,
+			StockCode: stockCode,
+			StockName: stockName,
+			Market: market,
 		}
 		stocks = append(stocks, stock)
 	}

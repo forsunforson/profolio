@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"io/ioutil"
 	"net/http"
+	"time"
 
 	"github.com/forsunforson/profolio/config"
 )
@@ -26,6 +27,12 @@ const (
 
 type JuheStock struct {
 	data *JuheData
+
+	ID int
+	Mtime time.Time
+	StockCode string
+	StockName string
+	Market string
 }
 
 type JuheData struct {

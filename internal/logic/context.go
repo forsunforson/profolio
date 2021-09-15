@@ -14,7 +14,11 @@ var (
 )
 
 func InitContext() {
-
+	ctx := RuntimeContext{}
+	stocks := GetAllStocks()
+	ctx.stocks = stocks
+	runtimeContext = &ctx
+	go Ticker()
 }
 
 func GetRunTimeContext() *RuntimeContext {

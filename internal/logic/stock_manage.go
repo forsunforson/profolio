@@ -11,11 +11,21 @@ import (
 
 // Ticker 定时任务，只要服务在运行就会更新股票价格
 func Ticker() {
-	tick := time.NewTicker(10 * time.Second)
+	// 开始运行程序时，先更新尝试着更新一下
+	tick := time.NewTicker(1 * time.Second)
 	for {
 		<-tick.C
 		if time.Now().Local().Hour() > 16 {
-			UpdateStock()
+			// 收盘了来更新一下
+			if runtimeContext.lastUpdate.Day() != time.Now().Day() {
+				// 更新所有关注的股票价格
+				UpdateStock()
+				runtimeContext.lastUpdate = time.Now()
+				// TODO更新汇率
+				// TODO更新所有组合的净值
+				// TODO更新所有股东的净值
+			}
+
 			tick.Reset(1 * time.Hour)
 		}
 	}

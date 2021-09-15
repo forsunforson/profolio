@@ -1,12 +1,15 @@
 package logic
 
 import (
+	"time"
+
 	"github.com/forsunforson/profolio/internal/model"
 )
 
 type RuntimeContext struct {
 	Portfolios []*model.Portfolio
 	Stocks     map[string]model.Stock
+	lastUpdate time.Time
 }
 
 var (

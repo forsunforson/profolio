@@ -19,7 +19,7 @@ type Stock interface {
 }
 
 const (
-	JuheURL = `http://web.juhe.cn:8080/finance/stock/`
+	JuheStockURL = `http://web.juhe.cn:8080/finance/stock/`
 
 	JuheHushen   = "hs"
 	JuheHongkong = "hk"
@@ -75,7 +75,7 @@ func NewStock(code string, market string) (Stock, error) {
 		fmt.Printf("unsupported market: %s\n", market)
 		return nil, err
 	}
-	url := fmt.Sprintf("%s%s?%s&key=%s", JuheURL, market, params, config.GetGlobalConfig().DateSource[0].AppKey)
+	url := fmt.Sprintf("%s%s?%s&key=%s", JuheStockURL, market, params, config.GetGlobalConfig().DateSource[0].AppKey)
 	rsp, err := http.Get(url)
 	if err != nil {
 		fmt.Printf("http get fail: %v\n", err)

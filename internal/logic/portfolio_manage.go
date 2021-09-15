@@ -23,13 +23,17 @@ func GetPortfolioInfo(id int) (*model.Portfolio, error) {
 	}
 	defer rows.Close()
 	for rows.Next() {
-		var id, market_value, cash, total_value int
-		rows.Scan(&id, &market_value, &cash, &total_value)
+		var id, marketValue, cash, totalValue int
+		err := rows.Scan(&id, &marketValue, &cash, &totalValue)
+		if err != nil {
+			glog.Errorf("read row fail: %s", err)
+			return nil, err
+		}
 		p := &model.Portfolio{
 			ID:          id,
-			MarketValue: market_value,
+			MarketValue: marketValue,
 			Cash:        cash,
-			Total:       total_value,
+			Total:       totalValue,
 		}
 		return p, nil
 	}
@@ -49,13 +53,13 @@ func GetAllPortfolios(pageSize, page int) ([]*model.Portfolio, error) {
 	counter := 0
 	for rows.Next() {
 		counter++
-		var id, market_value, cash, total_value int
-		rows.Scan(&id, &market_value, &cash, &total_value)
+		var id, marketValue, cash, totalValue int
+		rows.Scan(&id, &marketValue, &cash, &totalValue)
 		p := &model.Portfolio{
 			ID:          id,
-			MarketValue: market_value,
+			MarketValue: marketValue,
 			Cash:        cash,
-			Total:       total_value,
+			Total:       totalValue,
 		}
 		portfolios = append(portfolios, p)
 	}

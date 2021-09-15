@@ -33,6 +33,7 @@ func initGlobalConfig() {
 	if err != nil {
 		fmt.Printf("cannot open config: %v", err.Error())
 	}
+	defer f.Close()
 	buff := make([]byte, 2046)
 	l, err := f.Read(buff)
 	if err != nil {

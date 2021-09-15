@@ -24,7 +24,11 @@ func GetHolder(name string, portfolioID int) (*model.Holder, error) {
 		var id, total int
 		var mtime, ctime time.Time
 		var name, percentage string
-		rows.Scan(&id, &mtime, &ctime, &name, &percentage, &total)
+		err := rows.Scan(&id, &mtime, &ctime, &name, &percentage, &total)
+		if err != nil {
+			glog.Errorf("read row fail: %s", err)
+			return nil, err
+		}
 		per, _ := strconv.ParseFloat(percentage, 32)
 		h := model.Holder{
 			Name:       name,

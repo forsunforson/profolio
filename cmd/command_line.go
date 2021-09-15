@@ -13,7 +13,7 @@ func CommandReceiver() {
 		fmt.Println("\t1. 展示界面")
 		fmt.Println("\t9. 退出程序")
 		var n string
-		fmt.Scan(&n)
+		_, _ = fmt.Scan(&n)
 		switch n {
 		case "0":
 			showManageInterface()
@@ -36,7 +36,7 @@ func showManageInterface() {
 		fmt.Println("\t3. 股票管理")
 		fmt.Println("\t9. 返回上一级")
 		var n string
-		fmt.Scan(&n)
+		_, _ = fmt.Scan(&n)
 		switch n {
 		case "0":
 			portfolioInterface()
@@ -55,7 +55,7 @@ func showDisplayInterface() {
 func addHolder() {
 	fmt.Printf("Please Input A Name: \n")
 	var name string
-	fmt.Scan(&name)
+	_, _ = fmt.Scan(&name)
 	err := logic.NewHolder(name, 0)
 	if err != nil {
 		fmt.Printf("Add Holder fail, maybe there is a same name or please try again.\n")
@@ -64,7 +64,7 @@ func addHolder() {
 	fmt.Printf("Add Holder %s successfully.\n", name)
 }
 
-func showMakertValue() {
+func showMarketValue() {
 	ctx := logic.GetRunTimeContext()
 	for _, holder := range ctx.Portfolios[0].Holders {
 		fmt.Printf("%s has %.2f%% , value %d yuan\n", holder.Name, holder.Percentage*100, holder.Total)

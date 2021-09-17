@@ -21,7 +21,6 @@ func Ticker() {
 				// 更新所有关注的股票价格
 				UpdateStock()
 				runtimeContext.lastUpdate = time.Now()
-				// TODO更新汇率
 				// TODO更新所有组合的净值
 				// TODO更新所有股东的净值
 			}

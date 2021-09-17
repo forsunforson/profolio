@@ -7,9 +7,10 @@ import (
 )
 
 type RuntimeContext struct {
-	Portfolios []*model.Portfolio
-	Stocks     map[string]model.Stock
-	lastUpdate time.Time
+	Portfolios   []*model.Portfolio
+	Stocks       map[string]model.Stock
+	exchangeRate model.ExchangeRate
+	lastUpdate   time.Time
 }
 
 var (
@@ -24,6 +25,7 @@ func InitContext() {
 		stockMap[stock.GetCode()] = stock
 	}
 	ctx.Stocks = stockMap
+	ctx.exchangeRate = model.NewExchangeRate()
 	runtimeContext = &ctx
 	go Ticker()
 }

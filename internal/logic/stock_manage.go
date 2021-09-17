@@ -19,7 +19,7 @@ func Ticker() {
 			// 收盘了来更新一下
 			if runtimeContext.lastUpdate.Day() != time.Now().Day() {
 				// 更新所有关注的股票价格
-				UpdateStock()
+				UpdateAllStocks()
 				runtimeContext.lastUpdate = time.Now()
 				// TODO更新所有组合的净值
 				// TODO更新所有股东的净值
@@ -83,7 +83,7 @@ func GetAllStocks() []model.Stock {
 	return stockList
 }
 
-func UpdateStock() {
+func UpdateAllStocks() {
 	stocks := GetRunTimeContext().Stocks
 	for code, stock := range stocks {
 		now := time.Now()
@@ -123,5 +123,9 @@ func UpdateStock() {
 		}
 		stocks[code] = stock
 	}
+}
 
+// AddNewStock TODO 实现写入数据库逻辑
+func AddNewStock(stock model.Stock) error {
+	return nil
 }

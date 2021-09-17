@@ -7,6 +7,7 @@ var ()
 type Portfolio struct {
 	Accounts    []*Account
 	Holders     []*Holder
+	Stocks      []Stock
 	Cash        int
 	MarketValue int
 	Total       int

@@ -40,6 +40,8 @@ func showManageInterface() {
 		switch n {
 		case "0":
 			portfolioInterface()
+		case "3":
+			stockInterface()
 		case "9":
 			return
 		default:

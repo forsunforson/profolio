@@ -13,6 +13,17 @@ func PortfolioManager() {
 
 }
 
+// IsInvalidPort 检查组合ID是否有效
+func IsInvalidPort(id int) bool {
+	for _, p := range runtimeContext.Portfolios {
+		if p.ID == id {
+			return true
+		}
+	}
+	return false
+}
+
+// GetPortfolioInfo 根据组合ID获得组合的相关信息，包括净值和持仓
 func GetPortfolioInfo(id int) (*model.Portfolio, error) {
 	db := pool.Database
 	sql := "select * from portfolio_info where id = ? limit 10"
@@ -37,10 +48,13 @@ func GetPortfolioInfo(id int) (*model.Portfolio, error) {
 		}
 		return p, nil
 	}
+	// TODO 从portfolio_stock中读取组合的持仓
 	return nil, errors.New("portfolio not found")
 }
 
+// GetAllPortfolios 按页读取所有的组合信息
 func GetAllPortfolios(pageSize, page int) ([]*model.Portfolio, error) {
+	// TODO 后期先从runtime读，再从数据库读
 	db := pool.Database
 	portfolios := make([]*model.Portfolio, 0)
 	sql := fmt.Sprintf("select * from portfolio_info order by id limit 10 offset %d", page)
@@ -67,7 +81,7 @@ func GetAllPortfolios(pageSize, page int) ([]*model.Portfolio, error) {
 	return portfolios, nil
 }
 
-func AddNewPortfolio(total, market, cash int) (int, error) {
+func AddNewPortfolio(marketValue, cash int) (int, error) {
 	db := pool.Database
 	sql := "insert into portfolio_info (total_value, market_value, cash) values (?,?,?)"
 	stmt, err := db.Prepare(sql)
@@ -75,15 +89,22 @@ func AddNewPortfolio(total, market, cash int) (int, error) {
 		glog.Errorf("prepare sql[%s] fail: %s\n", sql, err)
 		return -1, err
 	}
-	ret, err := stmt.Exec(total, market, cash)
+	ret, err := stmt.Exec(marketValue, cash)
 	if err != nil {
 		glog.Errorf("exec sql fail: %s\n", err)
 		return -1, err
 	}
+
 	idx, err := ret.LastInsertId()
 	if err != nil {
 		glog.Errorf("get idx fail: %s", err)
 		return -1, nil
 	}
+	runtimeContext.Portfolios = append(runtimeContext.Portfolios, &model.Portfolio{
+		MarketValue: marketValue,
+		Cash:        cash,
+		Total:       marketValue + cash,
+		ID:          int(idx),
+	})
 	return int(idx), nil
 }

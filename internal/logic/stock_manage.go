@@ -126,6 +126,26 @@ func UpdateAllStocks() {
 }
 
 // AddNewStock TODO 实现写入数据库逻辑
-func AddNewStock(stock model.Stock) error {
-	return nil
+func AddNewStock(stock model.Stock) (int, error) {
+	db := pool.Database
+	sql := "insert into stock_info (stock_code, stock_name, market) values (?,?,?)"
+	stmt, err := db.Prepare(sql)
+	if err != nil {
+		glog.Errorf("prepare sql[%s] fail: %s\n", sql, err)
+		return -1, err
+	}
+	ret, err := stmt.Exec(stock.GetCode(), stock.GetName(), stock.GetMarket())
+	if err != nil {
+		glog.Errorf("exec sql fail: %s\n", err)
+		return -1, err
+	}
+	// 加入运行环境变量
+	runtimeContext.Stocks[stock.GetCode()] = stock
+
+	idx, err := ret.LastInsertId()
+	if err != nil {
+		glog.Errorf("get idx fail: %s", err)
+		return -1, nil
+	}
+	return int(idx), nil
 }

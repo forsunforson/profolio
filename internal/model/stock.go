@@ -16,6 +16,7 @@ type Stock interface {
 	GetLatestPrice() string
 	GetCode() string
 	GetDate() string
+	GetMarket() string
 }
 
 const (
@@ -134,4 +135,8 @@ func (s *JuheStock) GetLatestPrice() string {
 
 func (s *JuheStock) GetDate() string {
 	return s.CDate
+}
+
+func (s *JuheStock) GetMarket() string {
+	return s.Market
 }

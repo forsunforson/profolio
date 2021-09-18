@@ -13,7 +13,7 @@ func portfolioInterface() {
 		fmt.Println("\t0. 查看所有组合")
 		fmt.Println("\t1. 查看[i]组合信息")
 		fmt.Println("\t2. 查看[i]组合股东信息")
-		fmt.Println("\t3. 查看[i]组合股票信息")
+		fmt.Println("\t3. 管理[i]组合股票信息")
 		fmt.Println("\t4. 增加组合")
 		fmt.Println("\t9. 返回上一级")
 		var n string
@@ -25,6 +25,8 @@ func portfolioInterface() {
 			getPortfolioInfo()
 		case "2":
 			getHolderInfo()
+		case "3":
+			managePortStock()
 		case "4":
 			addNewPort()
 		case "9":
@@ -33,6 +35,17 @@ func portfolioInterface() {
 			fmt.Println("请输入正确的数字")
 		}
 	}
+}
+
+func managePortStock() {
+	fmt.Print("输入组合ID：")
+	var pID int
+	fmt.Scan(&pID)
+	if !logic.IsInvalidPort(pID) {
+		fmt.Printf("组合ID[%d]不存在\n", pID)
+		return
+	}
+
 }
 
 func getHolderInfo() {
@@ -64,9 +77,7 @@ func getPortfolioInfo() {
 }
 
 func addNewPort() {
-	var total, market, cash int
-	fmt.Print("输入组合总金额：")
-	fmt.Scan(&total)
+	var market, cash int
 	fmt.Print("输入组合市值：")
 	fmt.Scan(&market)
 	fmt.Print("输入组合现金：")
@@ -80,7 +91,7 @@ func addNewPort() {
 	case "n", "N":
 		return
 	}
-	idx, err := logic.AddNewPortfolio(total, market, cash)
+	idx, err := logic.AddNewPortfolio(market, cash)
 	if err != nil {
 		fmt.Println("生成新的组合失败，请重试")
 		return

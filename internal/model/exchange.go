@@ -89,7 +89,7 @@ func (e *JuheExchange) Update() {
 	if e.update.Day() == now.Day() {
 		return
 	}
-	url := fmt.Sprintf(JuheExchangeURL+"?key=%s", config.GetGlobalConfig().DateSource[0].AppKey)
+	url := fmt.Sprintf(JuheExchangeURL+"?key=%s", config.GetGlobalConfig().DateSource[0].ExchangeKey)
 	rsp, err := http.Get(url)
 	if err != nil {
 		glog.Errorf("http get fail: %v", err)

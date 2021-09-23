@@ -30,8 +30,17 @@ func Ticker() {
 	}
 }
 
-// GetAllStocks 读取组合中所有的股票，加入需要监听价格的队列
 func GetAllStocks() []model.Stock {
+	ctx := GetRunTimeContext()
+	stocks := make([]model.Stock, 0)
+	for _, v := range ctx.Stocks {
+		stocks = append(stocks, v)
+	}
+	return stocks
+}
+
+// readAllStocks 读取组合中所有的股票，加入需要监听价格的队列
+func readAllStocks() []model.Stock {
 	stocks := make(map[string]*model.JuheStock)
 	db := pool.Database
 	sql := "select * from stock_info order by id"

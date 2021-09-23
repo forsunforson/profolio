@@ -19,7 +19,7 @@ var (
 
 func InitContext() {
 	ctx := RuntimeContext{}
-	stocks := GetAllStocks()
+	stocks := readAllStocks()
 	stockMap := make(map[string]model.Stock)
 	for _, stock := range stocks {
 		stockMap[stock.GetCode()] = stock

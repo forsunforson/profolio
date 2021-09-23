@@ -18,6 +18,8 @@ func stockInterface() {
 		var n string
 		fmt.Scan(&n)
 		switch n {
+		case "0":
+			showAllStocks()
 		case "3":
 			addNewStock()
 		case "9":
@@ -26,6 +28,15 @@ func stockInterface() {
 			fmt.Println("请输入正确的数字")
 		}
 	}
+}
+
+func showAllStocks() {
+	stocks := logic.GetAllStocks()
+	// TODO 这里编号会变，使用编号展示股票信息是不靠谱的
+	for idx := 0; idx < len(stocks); idx++ {
+		fmt.Printf("编号[%d] 股票[%s] 代码[%s]\n", idx, stocks[idx].GetName(), stocks[idx].GetCode())
+	}
+
 }
 
 func addNewStock() {

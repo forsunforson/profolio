@@ -12,8 +12,9 @@ type GlobalConfig struct {
 }
 
 type DateSource struct {
-	Name   string `yaml:"name"`
-	AppKey string `yaml:"app_key"`
+	Name        string `yaml:"name"`
+	AppKey      string `yaml:"app_key"`
+	ExchangeKey string `yaml:"exchange_key"`
 }
 
 var (

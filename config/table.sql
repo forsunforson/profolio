@@ -32,7 +32,10 @@ create table portfolio_info (
     id INTEGER PRIMARY KEY,
     market_value INTEGER default 0,
     cash INTEGER default 0,
-    total_value INTEGER default 0
+    total INTEGER default 0,
+    stocks TEXT,
+    accounts TEXT,
+    holders TEXT
 );
 
 create table portfolio_stock (

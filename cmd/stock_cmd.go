@@ -2,9 +2,6 @@ package cmd
 
 import (
 	"fmt"
-
-	"github.com/forsunforson/profolio/internal/logic"
-	"github.com/forsunforson/profolio/internal/model"
 )
 
 func stockInterface() {
@@ -31,11 +28,11 @@ func stockInterface() {
 }
 
 func showAllStocks() {
-	stocks := logic.GetAllStocks()
-	// TODO 这里编号会变，使用编号展示股票信息是不靠谱的
-	for idx := 0; idx < len(stocks); idx++ {
-		fmt.Printf("编号[%d] 股票[%s] 代码[%s]\n", idx, stocks[idx].GetName(), stocks[idx].GetCode())
-	}
+	// stocks := logic.GetAllStocks()
+	// // TODO 这里编号会变，使用编号展示股票信息是不靠谱的
+	// for idx := 0; idx < len(stocks); idx++ {
+	// 	fmt.Printf("编号[%d] 股票[%s] 代码[%s]\n", idx, stocks[idx].GetName(), stocks[idx].GetCode())
+	// }
 
 }
 
@@ -45,22 +42,12 @@ func addNewStock() {
 	fmt.Println("\t1.沪深\n\t2.香港\n\t3.美国\n\t其他任意键退出")
 	var n string
 	fmt.Scan(&n)
-	market := ""
+	//market := ""
 	prefix := ""
 	switch n {
 	case "1":
-		market = model.JuheHushen
-		fmt.Println("请选择:\n\t1.沪市\n\t2.深市\n\t其他任意键退出")
-		fmt.Scan(&n)
-		if n == "1" {
-			prefix = "sh"
-		} else if n == "2" {
-			prefix = "sz"
-		} else {
-			return
-		}
 	case "2":
-		market = model.JuheHongkong
+
 	default:
 		return
 	}
@@ -78,12 +65,4 @@ func addNewStock() {
 			return
 		}
 	}
-	stock, err := model.NewStock(prefix+code, market)
-	if err != nil {
-		fmt.Printf("找不到该股票或者发生错误：%s\n", err)
-		return
-	}
-	// TODO 使用异步通知完成
-	go logic.AddNewStock(stock)
-	fmt.Println("成功增加股票：" + stock.GetName())
 }

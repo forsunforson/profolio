@@ -6,7 +6,6 @@ import (
 
 	"github.com/forsunforson/profolio/cmd"
 	"github.com/forsunforson/profolio/config"
-	"github.com/forsunforson/profolio/internal/logic"
 	"github.com/golang/glog"
 )
 
@@ -18,7 +17,6 @@ func main() {
 	flag.Parse()
 	glog.Infof("aaa")
 	defer glog.Flush()
-	logic.InitContext()
 	switch *op {
 	case "0":
 		cmd.CommandReceiver()
